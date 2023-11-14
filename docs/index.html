@@ -8,26 +8,79 @@
       content="width=device-width, height=device-height,
     user-scalable=no, initial-scale=1, maximum-scale=1"
     />
-    <!-- Load 'sounds-some-sounds' if 'isSoundEnabled' option is true -->
     <script src="https://unpkg.com/sounds-some-sounds@3.0.0/build/index.js"></script>
-    <!-- Load 'gif-capture-canvas' if 'isCapturing' option is true -->
     <script src="https://unpkg.com/gif-capture-canvas@1.1.0/build/index.js"></script>
-    <!-- Load 'pixi' when using pixi theme -->
     <script src="https://unpkg.com/pixi.js@5.3.0/dist/pixi.min.js"></script>
     <script src="https://unpkg.com/pixi-filters@3.1.1/dist/pixi-filters.js"></script>
-    <!-- Load 'terser' if 'isMinifying' option is true -->
-    <!--
-    <script src="https://unpkg.com/terser@4.6.11/dist/bundle.min.js"></script>
-    -->
-    <!-- Load 'lodash.clonedeep' when using rewind -->
+    <script src="https://unpkg.com/crisp-game-lib@1.1.1/docs/bundle.js"></script>
+    <script src="freeshooter.ts"></script>
+
     <script>
-      var module = {};
-    </script>
-    <script src="https://unpkg.com/lodash.clonedeep@4.5.0/index.js"></script>
-    <script src="bundle.js"></script>
-    <script>
-      addGameScript();
-      window.addEventListener("load", onLoad);
+      title = "Freeshooting";
+
+      description = `
+`;
+
+      characters = [
+        `
+ ll   
+llll  
+ yy
+ yylll 
+ LLl  
+ LL   
+`,
+      ];
+
+      const G = {
+        WIDTH: 150,
+        HEIGHT: 50,
+      };
+
+      options = {
+        viewSize: { x: G.WIDTH, y: G.HEIGHT },
+      };
+
+      const AMMO_MAX = 5;
+      const shotBullets = [];
+      let curAmmo;
+
+      function update() {
+        if (!ticks) {
+          curAmmo = AMMO_MAX;
+        }
+
+        if (input.isJustPressed) {
+          fireBullet();
+        }
+        drawBullets();
+        moveBullets();
+      }
+
+      function fireBullet() {
+        if (curAmmo > 0) {
+          shotBullets.push(0);
+          curAmmo -= 1;
+        }
+      }
+
+      function drawBullets() {
+        shotBullets.forEach((bulPos) => {
+          color("yellow");
+          rect(bulPos + 6, (G.HEIGHT * 2) / 3, 1, 1);
+        });
+
+        color("black");
+        char("a", 6, (G.HEIGHT * 2) / 3);
+      }
+
+      function moveBullets() {
+        for (i = 0; i < shotBullets.length; i++) {
+          shotBullets[i] += 1;
+        }
+      }
+
+      addEventListener("load", onLoad);
     </script>
   </head>
   <body style="background: #ddd"></body>
