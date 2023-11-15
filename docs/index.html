@@ -75,7 +75,8 @@ gggggg
         }
 
         if (reloadTimer <= 0) {
-          curAmmo = 5;
+          curAmmo += 1;
+          reloadTimer = RELOAD_TIME;
         }
 
         if (input.isJustReleased) {
