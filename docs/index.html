@@ -29,6 +29,14 @@ llll
  LLl
  LL
       `,
+        `
+  gg  
+  gg g
+g gg g
+gggggg
+  gg  
+  gg  
+      `,
       ];
 
       const G = {
@@ -60,7 +68,7 @@ llll
         if (allEnemies.length == 0) {
           addEnemies();
         }
-        drawEnemies();
+        //drawEnemies();
         moveEnemies();
         handleCollisions();
       }
@@ -89,13 +97,13 @@ llll
       }
 
       function addEnemies() {
-        allEnemies.push(G.WIDTH);
+        allEnemies.push(G.WIDTH + 4);
       }
 
       function drawEnemies() {
         allEnemies.forEach((enemyPos) => {
-          color("red");
-          rect(enemyPos, (G.HEIGHT * 2) / 3, 2, 4);
+          color("black");
+          char("b", enemyPos, (G.HEIGHT * 2) / 3);
         });
       }
 
@@ -107,7 +115,16 @@ llll
 
       function handleCollisions() {
         remove(allEnemies, (e) => {
-          return e < 0;
+          const bulletEnemyCollision = char("b", e, (G.HEIGHT * 2) / 3)
+            .isColliding.rect.yellow;
+          return e < 0 || bulletEnemyCollision;
+        });
+
+        remove(shotBullets, (b) => {
+          color("yellow");
+          const isCollidingWithEnemies = box(b + 6, (G.HEIGHT * 2) / 3, 1)
+            .isColliding.char.b;
+          return isCollidingWithEnemies || b > G.WIDTH;
         });
       }
 
