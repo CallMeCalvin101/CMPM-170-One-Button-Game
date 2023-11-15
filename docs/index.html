@@ -50,7 +50,8 @@ gggggg
 
       const AMMO_MAX = 5;
       let shotBullets = [];
-      const RELOAD_TIME = 50;
+      const RELOAD_TIME = 100;
+      const RAPID_RELOAD = 5;
       let curAmmo, reloadTimer, spawnTimer, spawnCount;
 
       let allEnemies = [];
@@ -71,7 +72,7 @@ gggggg
         }
 
         if (input.isPressed && reloadTimer > 0) {
-          reloadTimer -= 1;
+          reloadTimer -= RAPID_RELOAD - curAmmo;
         }
 
         if (reloadTimer <= 0) {
