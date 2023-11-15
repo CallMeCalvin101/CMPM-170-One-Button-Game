@@ -51,7 +51,7 @@ gggggg
         theme: "pixel",
       };
 
-      const AMMO_MAX = 5;
+      const AMMO_MAX = 7;
       let shotBullets = [];
       const RELOAD_TIME = 100;
       const RAPID_RELOAD = 5;
@@ -64,7 +64,7 @@ gggggg
         if (!ticks) {
           shotBullets = [];
           allEnemies = [];
-          curAmmo = AMMO_MAX;
+          curAmmo = 5;
           spawnTimer = MAX_SPAWN_OFFSET;
           reloadTimer = RELOAD_TIME;
           spawnCount = 5;
@@ -75,15 +75,19 @@ gggggg
         }
 
         if (input.isPressed && reloadTimer > 0) {
-          if (curAmmo > 3) {
+          if (curAmmo < 2) {
             reloadTimer -= 2;
+          } else if (curAmmo > 5) {
+            reloadTimer -= 5;
           } else {
-            reloadTimer -= RAPID_RELOAD - curAmmo;
+            reloadTimer -= curAmmo;
           }
         }
 
         if (reloadTimer <= 0) {
-          curAmmo += 1;
+          if (curAmmo < AMMO_MAX) {
+            curAmmo += 1;
+          }
           reloadTimer = RELOAD_TIME;
         }
 
