@@ -50,7 +50,8 @@ gggggg
 
       const AMMO_MAX = 5;
       const shotBullets = [];
-      let curAmmo;
+      const RELOAD_TIME = 50;
+      let curAmmo, reloadTimer;
 
       const allEnemies = [];
 
@@ -62,13 +63,25 @@ gggggg
         if (input.isJustPressed) {
           fireBullet();
         }
-        drawBullets();
+
+        if (input.isPressed && reloadTimer > 0) {
+          reloadTimer -= 1;
+        }
+
+        if (reloadTimer <= 0) {
+          curAmmo = 5;
+        }
+
+        if (input.isJustReleased) {
+          reloadTimer = RELOAD_TIME;
+        }
+
+        drawPlayer();
         moveBullets();
 
         if (allEnemies.length == 0) {
           addEnemies();
         }
-        //drawEnemies();
         moveEnemies();
         handleCollisions();
       }
@@ -80,7 +93,7 @@ gggggg
         }
       }
 
-      function drawBullets() {
+      function drawPlayer() {
         shotBullets.forEach((bulletPos) => {
           color("yellow");
           rect(bulletPos + 6, (G.HEIGHT * 2) / 3, 1, 1);
@@ -88,6 +101,12 @@ gggggg
 
         color("black");
         char("a", 6, (G.HEIGHT * 2) / 3);
+
+        for (let i = 0; i < curAmmo; i++) {
+          rect(G.WIDTH / 2 - 6 + 3 * i, G.HEIGHT / 20, 1, 2);
+        }
+
+        rect(G.WIDTH / 2 - 5.5, (G.HEIGHT * 3) / 20, reloadTimer/4, 2);
       }
 
       function moveBullets() {
