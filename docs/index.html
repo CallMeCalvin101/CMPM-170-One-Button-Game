@@ -49,15 +49,21 @@ gggggg
       };
 
       const AMMO_MAX = 5;
-      const shotBullets = [];
+      let shotBullets = [];
       const RELOAD_TIME = 50;
-      let curAmmo, reloadTimer;
+      let curAmmo, reloadTimer, spawnTimer, spawnCount;
 
-      const allEnemies = [];
+      let allEnemies = [];
+      const MAX_SPAWN_OFFSET = 10;
 
       function update() {
         if (!ticks) {
+          shotBullets = [];
+          allEnemies = [];
           curAmmo = AMMO_MAX;
+          spawnTimer = MAX_SPAWN_OFFSET;
+          reloadTimer = RELOAD_TIME;
+          spawnCount = 5;
         }
 
         if (input.isJustPressed) {
@@ -79,11 +85,14 @@ gggggg
         drawPlayer();
         moveBullets();
 
-        if (allEnemies.length == 0) {
-          addEnemies();
-        }
+        addEnemies();
+
         moveEnemies();
         handleCollisions();
+
+        if (allEnemies == 0) {
+          spawnCount = Math.floor(Math.random() * 5);
+        }
       }
 
       function fireBullet() {
@@ -106,7 +115,7 @@ gggggg
           rect(G.WIDTH / 2 - 6 + 3 * i, G.HEIGHT / 20, 1, 2);
         }
 
-        rect(G.WIDTH / 2 - 5.5, (G.HEIGHT * 3) / 20, reloadTimer/4, 2);
+        rect(G.WIDTH / 2 - 6, (G.HEIGHT * 3) / 20, reloadTimer / 4, 2);
       }
 
       function moveBullets() {
@@ -116,7 +125,15 @@ gggggg
       }
 
       function addEnemies() {
-        allEnemies.push(G.WIDTH + 4);
+        if (spawnCount > 0) {
+          if (spawnTimer > 0) {
+            spawnTimer -= 1;
+          } else {
+            allEnemies.push(G.WIDTH + 4);
+            spawnTimer = MAX_SPAWN_OFFSET;
+            spawnCount -= 1;
+          }
+        }
       }
 
       function drawEnemies() {
@@ -136,6 +153,14 @@ gggggg
         remove(allEnemies, (e) => {
           const bulletEnemyCollision = char("b", e, (G.HEIGHT * 2) / 3)
             .isColliding.rect.yellow;
+
+          const playerEnemyCollision = char("b", e, (G.HEIGHT * 2) / 3)
+            .isColliding.char.a;
+
+          if (playerEnemyCollision) {
+            end();
+          }
+
           return e < 0 || bulletEnemyCollision;
         });
 
@@ -143,6 +168,10 @@ gggggg
           color("yellow");
           const isCollidingWithEnemies = box(b + 6, (G.HEIGHT * 2) / 3, 1)
             .isColliding.char.b;
+
+          if (isCollidingWithEnemies) {
+            addScore(100);
+          }
           return isCollidingWithEnemies || b > G.WIDTH;
         });
       }
