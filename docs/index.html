@@ -46,6 +46,9 @@ gggggg
 
       options = {
         viewSize: { x: G.WIDTH, y: G.HEIGHT },
+        isPlayingBgm: true,
+        isReplayEnabled: true,
+        theme: "pixel",
       };
 
       const AMMO_MAX = 5;
@@ -72,7 +75,11 @@ gggggg
         }
 
         if (input.isPressed && reloadTimer > 0) {
-          reloadTimer -= RAPID_RELOAD - curAmmo;
+          if (curAmmo > 3) {
+            reloadTimer -= 2;
+          } else {
+            reloadTimer -= RAPID_RELOAD - curAmmo;
+          }
         }
 
         if (reloadTimer <= 0) {
@@ -93,13 +100,18 @@ gggggg
         handleCollisions();
 
         if (allEnemies == 0) {
-          spawnCount = Math.floor(Math.random() * 5);
+          let difficultyFactor = score / 2500;
+          if (difficultyFactor > 5) {
+            difficultyFactor = 5;
+          }
+          spawnCount = Math.floor(Math.random() * 4) + difficultyFactor;
         }
       }
 
       function fireBullet() {
         if (curAmmo > 0) {
           shotBullets.push(0);
+          play("hit");
           curAmmo -= 1;
         }
       }
@@ -114,10 +126,10 @@ gggggg
         char("a", 6, (G.HEIGHT * 2) / 3);
 
         for (let i = 0; i < curAmmo; i++) {
-          rect(G.WIDTH / 2 - 6 + 3 * i, G.HEIGHT / 20, 1, 2);
+          rect(G.WIDTH / 2 - 13 + 3 * i, G.HEIGHT / 20, 1, 2);
         }
 
-        rect(G.WIDTH / 2 - 6, (G.HEIGHT * 3) / 20, reloadTimer / 4, 2);
+        rect(G.WIDTH / 2 - 13, (G.HEIGHT * 3) / 20, reloadTimer / 4, 2);
       }
 
       function moveBullets() {
@@ -131,7 +143,7 @@ gggggg
           if (spawnTimer > 0) {
             spawnTimer -= 1;
           } else {
-            allEnemies.push(G.WIDTH + 4);
+            allEnemies.push(G.WIDTH + 12);
             spawnTimer = MAX_SPAWN_OFFSET;
             spawnCount -= 1;
           }
@@ -173,6 +185,7 @@ gggggg
 
           if (isCollidingWithEnemies) {
             addScore(100);
+            play("click");
           }
           return isCollidingWithEnemies || b > G.WIDTH;
         });
