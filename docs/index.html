@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>crisp-game-lib</title>
+    <title>Freeshooter</title>
     <meta
       name="viewport"
       content="width=device-width, height=device-height,
@@ -13,23 +13,22 @@
     <script src="https://unpkg.com/pixi.js@5.3.0/dist/pixi.min.js"></script>
     <script src="https://unpkg.com/pixi-filters@3.1.1/dist/pixi-filters.js"></script>
     <script src="https://unpkg.com/crisp-game-lib@1.1.1/docs/bundle.js"></script>
-    <script src="freeshooter.ts"></script>
 
     <script>
       title = "Freeshooting";
 
       description = `
-`;
+      `;
 
       characters = [
         `
- ll   
-llll  
+ ll
+llll
  yy
- yylll 
- LLl  
- LL   
-`,
+ yylll
+ LLl
+ LL
+      `,
       ];
 
       const G = {
@@ -45,6 +44,8 @@ llll
       const shotBullets = [];
       let curAmmo;
 
+      const allEnemies = [];
+
       function update() {
         if (!ticks) {
           curAmmo = AMMO_MAX;
@@ -55,6 +56,13 @@ llll
         }
         drawBullets();
         moveBullets();
+
+        if (allEnemies.length == 0) {
+          addEnemies();
+        }
+        drawEnemies();
+        moveEnemies();
+        handleCollisions();
       }
 
       function fireBullet() {
@@ -65,9 +73,9 @@ llll
       }
 
       function drawBullets() {
-        shotBullets.forEach((bulPos) => {
+        shotBullets.forEach((bulletPos) => {
           color("yellow");
-          rect(bulPos + 6, (G.HEIGHT * 2) / 3, 1, 1);
+          rect(bulletPos + 6, (G.HEIGHT * 2) / 3, 1, 1);
         });
 
         color("black");
@@ -78,6 +86,29 @@ llll
         for (i = 0; i < shotBullets.length; i++) {
           shotBullets[i] += 1;
         }
+      }
+
+      function addEnemies() {
+        allEnemies.push(G.WIDTH);
+      }
+
+      function drawEnemies() {
+        allEnemies.forEach((enemyPos) => {
+          color("red");
+          rect(enemyPos, (G.HEIGHT * 2) / 3, 2, 4);
+        });
+      }
+
+      function moveEnemies() {
+        for (i = 0; i < allEnemies.length; i++) {
+          allEnemies[i] -= 1;
+        }
+      }
+
+      function handleCollisions() {
+        remove(allEnemies, (e) => {
+          return e < 0;
+        });
       }
 
       addEventListener("load", onLoad);
